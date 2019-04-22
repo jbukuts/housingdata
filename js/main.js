@@ -1,5 +1,5 @@
 var margin = {left: 80, right: 20, top: 50, bottom: 100};
-var height = 500 - margin.top - margin.bottom,
+var height = 950 - margin.top - margin.bottom,
     width = 800 - margin.left - margin.right;
 
 
@@ -9,8 +9,7 @@ var div = d3.select("body").append("div")
 
 // load the data
 d3.csv("data/data.csv").then(function (data) {
-  	console.log(data[0]["MSZoning"]);
-
+  	
   	// x axis for graph
  	var neighborhoods = [];
  	var zones = [];
@@ -20,17 +19,17 @@ d3.csv("data/data.csv").then(function (data) {
 	for (var i=0;i<data.length;i++){
 		if(!neighborhoods.includes(data[i]["Neighborhood"])){
 			neighborhoods.push(data[i]["Neighborhood"]);
-			console.log(data[i]["Neighborhood"]);
+			//console.log(data[i]["Neighborhood"]);
 		}
 
 
 		if(!zones.includes(data[i]["MSZoning"])){
 			zones.push(data[i]["MSZoning"]);
-			console.log(data[i]["MSZoning"]);
+			//console.log(data[i]["MSZoning"]);
 		}
 
 		if(data[i]["SalePrice"] > parseInt(maxPrice)){
-			console.log("new max");
+			//console.log("new max");
 			maxPrice = data[i]["SalePrice"];
 		}
 
@@ -38,6 +37,15 @@ d3.csv("data/data.csv").then(function (data) {
 			minPrice = data[i]["SalePrice"];
 		}
 	}
+
+	for (var i=0;i<zones.length;i++){
+		console.log(zones[i]);
+	}
+
+	var colorScheme = d3.scaleOrdinal()
+		.domain(zones)
+		.range(d3.schemeDark2 );
+	console.log(colorScheme);
 
 	console.log("Highest Sell: "+maxPrice);
 	console.log("Lowest Sell: "+minPrice);
@@ -50,11 +58,21 @@ d3.csv("data/data.csv").then(function (data) {
 		.attr("transform", "translate(" + margin.left +
 		", " + margin.top + ")");
 
+	// adds the title for the chart
+    g.append("text")
+        .attr("class", "title")
+        .attr("x", (width / 2))
+        .attr("y", 0 - (margin.top / 2))
+        .attr("text-anchor", "middle")
+        .style("font-size", "16px")
+        .style("font-weight", "bold")
+        .text("House Sale Price By Neighborhood");
+
 
 	// x axis label
 	var xLabel = g.append("text")
-		.attr("y", height + 50)
-		.attr("x", width / 2)
+		.attr("y", height + 75)
+		.attr("x", width/2)
 		.attr("font-size", "20px")
 		.attr("text-anchor", "middle")
 		.text("Neighborhood");
@@ -62,13 +80,11 @@ d3.csv("data/data.csv").then(function (data) {
 	// y axis label
 	var yLabel = g.append("text")
 		.attr("transform", "rotate(-90)")
-		.attr("y", -40)
-		.attr("x", -170)
+		.attr("y", -60)
+		.attr("x", -(height/2))
 		.attr("font-size", "20px")
 		.attr("text-anchor", "middle")
 		.text("Sale Price")
-
-
 
 	// scale for the x axis
     var x = d3.scaleBand()
@@ -97,18 +113,48 @@ d3.csv("data/data.csv").then(function (data) {
         .attr("class", "y axis")
         .call(d3.axisLeft(y));
 
-
-
     g.selectAll("circles")
         .data(data)
         .enter()
         .append("circle")
         .attr("cx", function (s) {
-            return x(s["Neighborhood"]);
+            return 15+x(s["Neighborhood"]);
         })
         .attr("cy", function (s) {
             return y(s["SalePrice"]);
         })
-        .attr("r", 2);
+        .attr("r", 4)
+        .attr("fill", function (s) {
+        	return colorScheme(s["MSZoning"]);
+        });
+
+
+    // tooltip on hover for chart
+        g.selectAll("circle")
+            .on("mouseover", function (s) {
+                // bring to view
+                div.transition()
+                    .duration(200)
+                    .style("opacity", .9);
+
+                div.html("Sale Price was $"+s["SalePrice"]+"\n"+"Neighborhood is "+s["Neighborhood"])
+                	.style("left", (d3.event.pageX) + "px")
+                	.style("top", (d3.event.pageY - 28) + "px");
+                $(".tooltip").digits();
+            })
+            .on("mouseout", function (d) {
+                div.transition()
+                    .duration(500)
+                    .style("opacity", 0);
+            });
 
 });
+
+
+
+// Thanks @Paul Creasey for the regex
+$.fn.digits = function () {
+    return this.each(function () {
+        $(this).text($(this).text().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"));
+    })
+}

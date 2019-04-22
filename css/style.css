@@ -1,3 +1,20 @@
 body {
 	font-family: "Arial";
 }
+
+
+#chart-area {
+	margin: auto;
+	width: 700px;
+}
+
+/** tooltip for scatterplot **/
+.tooltip {
+    position: absolute;
+    text-align: center;
+    padding: 3px;
+    color:white;
+    background:rgba(0,0,0,.9);
+    pointer-events: none;
+    white-space:pre-wrap;
+}
