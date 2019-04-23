@@ -68,7 +68,6 @@ d3.csv("data/data.csv").then(function (data) {
         .style("font-weight", "bold")
         .text("House Sale Price By Neighborhood");
 
-
 	// x axis label
 	var xLabel = g.append("text")
 		.attr("y", height + 75)
@@ -137,7 +136,7 @@ d3.csv("data/data.csv").then(function (data) {
                     .duration(200)
                     .style("opacity", .9);
 
-                div.html("Sale Price was $"+s["SalePrice"]+"\n"+"Neighborhood is "+s["Neighborhood"])
+                div.html("Sale Price was $"+s["SalePrice"]+"\n"+"Neighborhood is "+s["Neighborhood"]+"\n"+"Zoning: "+s["MSZoning"])
                 	.style("left", (d3.event.pageX) + "px")
                 	.style("top", (d3.event.pageY - 28) + "px");
                 $(".tooltip").digits();

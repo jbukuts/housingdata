@@ -2,6 +2,15 @@ body {
 	font-family: "Arial";
 }
 
+.link {
+    text-decoration: none;
+    color: black;
+}
+
+.link:hover {
+    text-decoration: underline;
+}
+
 
 #chart-area {
 	margin: auto;
@@ -17,4 +26,20 @@ body {
     background:rgba(0,0,0,.9);
     pointer-events: none;
     white-space:pre-wrap;
+}
+
+
+
+
+html {
+  animation: fadeIn ease 1.75s;
+}
+
+@keyframes fadeIn{
+  0% {
+    opacity:0;
+  }
+  100% {
+    opacity:1;
+  }
 }
