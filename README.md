@@ -1,7 +1,12 @@
 # housingdata
-Project to visualize housing data 
+Project to visualize housing data collected from Boston, Massachusetts
 
-Data pulled from: 
+Source: 
+------ 
 https://www.kaggle.com/alphaepsilon/housing-prices-dataset/version/1#test.csv
 
-Project aims to show the relationship between certain streets and their property worths 
+Aims: 
+-----
+* the relationship between neighborhood and sale prices
+* mean sales prices throughout each neighborhood
+* most prevalent zoning in eeach neighborhood

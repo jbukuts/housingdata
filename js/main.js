@@ -100,7 +100,7 @@ d3.csv("data/data.csv").then(function (data) {
         .range([height, 0])
         .domain([minPrice, maxPrice]);
 
-     // x axis call
+    // x axis call
     g.append("g")
         .attr("class", "x axis")
         .attr("transform", "translate(0," + height + ")")
