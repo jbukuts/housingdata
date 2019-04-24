@@ -42,6 +42,11 @@ d3.csv("data/data.csv").then(function (data) {
 		console.log(zones[i]);
 	}
 
+	var select = document.getElementById("drop-down");
+	for (var i=0;i<zones.length;i++){
+		select.options[select.options.length] = new Option(zones[i],zones[i]);
+	}
+
 	var colorScheme = d3.scaleOrdinal()
 		.domain(zones)
 		.range(d3.schemeDark2 );
@@ -112,7 +117,45 @@ d3.csv("data/data.csv").then(function (data) {
         .attr("class", "y axis")
         .call(d3.axisLeft(y));
 
-    g.selectAll("circles")
+
+    // add the legend
+    var legend = g.append("g")
+        .attr("class", "legend")
+        .attr("x", 0)
+        .attr("y", 25)
+        .attr("height", 100)
+        .attr("width", 100);
+
+    // rectangles for legend
+    legend.selectAll('g')
+        .data(zones)
+        .enter()
+        .append("rect")
+        .attr("y", function(d,i) {
+        	return i * 25;
+        })
+        .attr("x", width)
+        .attr("width", 10)
+        .attr("height", 10)
+        .style("fill", function (d) {
+        	return colorScheme(d);
+        });
+
+    // text for legend
+    legend.selectAll('g')
+        .data(zones)
+        .enter()
+        .append("text")
+        .attr("y", function(d,i) {
+        	return (i * 25)+12;
+        })
+        .attr("x", width - 50)
+        .text(function (d) {
+            return d
+        });
+
+    function drawAll() {
+    	g.selectAll("circle")
         .data(data)
         .enter()
         .append("circle")
@@ -126,10 +169,52 @@ d3.csv("data/data.csv").then(function (data) {
         .attr("fill", function (s) {
         	return colorScheme(s["MSZoning"]);
         });
+    }
+    
+    drawAll();
+    circleHover();
 
+    // on dropdown change
+    d3.select("#drop-down")
+        .on("change", function (d) {
+            var zoneSelect = d3.select("#drop-down").node().value;
+            console.log(zoneSelect);
 
-    // tooltip on hover for chart
-        g.selectAll("circle")
+            g.selectAll("circle")
+            	.remove()
+            	.exit();
+
+           	g.selectAll("circle")
+           		.data(data)
+           		.enter()
+	           	.append("circle")
+	        	.attr("cx", function (s) {
+	        		if (s["MSZoning"] == zoneSelect || zoneSelect == "All")
+	            		return 15+x(s["Neighborhood"]);
+	        	})
+	        	.attr("cy", function (s) {
+	        		if (s["MSZoning"] == zoneSelect || zoneSelect == "All")
+	            		return y(s["SalePrice"]);
+	        	})
+	        	.attr("r", 4)
+	        	.attr("fill", function (s) {
+        			return colorScheme(s["MSZoning"]);
+        		})
+        		.attr("opacity",0)
+        		.transition()
+            	.duration(500)
+        		.attr("opacity", function(s) {
+        			if (s["MSZoning"] == zoneSelect || zoneSelect == "All")
+        				return 1;
+        			return 0;
+        		});
+
+	        	circleHover();           
+        })
+
+    // ensure hover capability
+    function circleHover(){
+    	g.selectAll("circle")
             .on("mouseover", function (s) {
                 // bring to view
                 div.transition()
@@ -146,10 +231,9 @@ d3.csv("data/data.csv").then(function (data) {
                     .duration(500)
                     .style("opacity", 0);
             });
-
+    }
+  
 });
-
-
 
 // Thanks @Paul Creasey for the regex
 $.fn.digits = function () {
