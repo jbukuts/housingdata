@@ -40,12 +40,13 @@ d3.csv("data/data.csv").then(function (data) {
 	console.log(jData);
 
 	// calculate means
+	// actual calculation
 	for (var i=0;i<jData.length;i++){
-		// actual calculation
 		means[i] = (jData[i].Houses.reduce(function (sum, price) { return sum + price.Price;},0))/jData[i].Houses.length;
 		console.log(means[i]);
 	}
 
+	// range of the y axis
 	console.log(Math.min(...means)+", "+Math.max(...means));
 
 
